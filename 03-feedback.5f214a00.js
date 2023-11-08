@@ -1,0 +1,2 @@
+const e={formElem:document.querySelector(".js-form1")};e.formElem.addEventListener("input",(function(o){const t={};new FormData(e.formElem).forEach(((e,o)=>{t[o]=e})),saveToLs("userData",t)})),e.formElem.addEventListener("submit",(function(e){e.preventDefault();const o=loadFromLS("userData");localStorage.removeItem("userData"),e.target.reset(),console.log(o)})),function(){const o=loadFromLS("userData")||{};for(const t of Object.keys(o))e.formElem.elements[t].value=o[t]}();
+//# sourceMappingURL=03-feedback.5f214a00.js.map
