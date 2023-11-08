@@ -1,48 +1,60 @@
-// import { saveToLs, loadFromLS } from './helpers';
+import throttle from 'lodash.throttle';
 
 const refs = {
-    formElem: document.querySelector('.js-form1'),
+    formEl: document.querySelector('.feedback-form'),
 };
 
-refs.formElem.addEventListener('input', onFormElemInput);
+refs.formEl.addEventListener('input', throttle(onFormElemInput, 500));
+refs.formEl.addEventListener('submit', onFormElemSubmit);
 
-function onFormElemInput(evt) {
+
+function onFormElemInput(event) {
     const userForm = {};
-    // userForm.userName = refs.formElem.elements.name.value;
-    // userForm.userBio = refs.formElem.elements.bio.value;
-    // userForm.userPassword = refs.formElem.elements.password.value;
 
-    const formData = new FormData(refs.formElem);
+    const formData = new FormData(refs.formEl);
 
     formData.forEach((value, key) => {
         userForm[key] = value;
     });
 
-    saveToLs('userData', userForm);
+    save('userData', userForm);
 }
 
-function onLoad() {
-    const data = loadFromLS('userData') || {};
+function loadPage() {
+    const data = load('userData') || {};
 
-    // refs.formElem.elements.name.value = data.name;
-    // refs.formElem.elements.bio.value = data.bio;
-    // refs.formElem.elements.password.value = data.password;
-
-    // ['name', 'bio','password']
     for (const key of Object.keys(data)) {
-        refs.formElem.elements[key].value = data[key];
+        refs.formEl.elements[key].value = data[key];
     }
 }
 
-function onFormElemSubmit(e) {
-    e.preventDefault();
+function onFormElemSubmit(event) {
+    event.preventDefault();
 
-    const data = loadFromLS('userData');
+    const data = load('userData');
     localStorage.removeItem('userData');
-    e.target.reset();
+    event.target.reset();
     console.log(data);
 }
 
-refs.formElem.addEventListener('submit', onFormElemSubmit);
 
-onLoad();
+loadPage();
+
+
+function load(key) {
+    try {
+        const serializedState = localStorage.getItem(key);
+        return serializedState === null ? undefined : JSON.parse(serializedState);
+    } catch (error) {
+        console.error("Get state error: ", error.message);
+    }
+}
+
+function save(key, value) {
+    try {
+        const serializedState = JSON.stringify(value);
+        localStorage.setItem(key, serializedState);
+    } catch (error) {
+        console.error("Set state error: ", error.message);
+    }
+}
