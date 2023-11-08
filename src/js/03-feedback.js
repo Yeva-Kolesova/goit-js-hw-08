@@ -1,4 +1,4 @@
-import { saveToLs, loadFromLS } from './helpers';
+// import { saveToLs, loadFromLS } from './helpers';
 
 const refs = {
     formElem: document.querySelector('.js-form1'),
