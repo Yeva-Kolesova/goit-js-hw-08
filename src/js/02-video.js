@@ -6,9 +6,7 @@ const player = new Player(iframeEl);
 
 player.on('timeupdate', throttle(onTimeUpdate, 1000));
 
-const playbackTime = localStorage.getItem("videoplayer-current-time")
-
-player.setCurrentTime(playbackTime).then(function (seconds) {
+player.setCurrentTime(load('videoplayer-current-time')).then(function (seconds) {
 }).catch(function (error) {
     switch (error.name) {
         case 'RangeError':
@@ -18,6 +16,27 @@ player.setCurrentTime(playbackTime).then(function (seconds) {
             break;
     }
 });
+
 function onTimeUpdate(data) {
-    console.log(data.seconds);
+    save("videoplayer-current-time", data.seconds);
+    console.log(data.seconds)
 }
+
+
+function save(key, value) {
+    try {
+        const serializedState = JSON.stringify(value);
+        localStorage.setItem(key, serializedState);
+    } catch (error) {
+        console.error("Set state error: ", error.message);
+    }
+};
+
+function load(key) {
+    try {
+        const serializedState = localStorage.getItem(key);
+        return serializedState === null ? undefined : JSON.parse(serializedState);
+    } catch (error) {
+        console.error("Get state error: ", error.message);
+    }
+};
